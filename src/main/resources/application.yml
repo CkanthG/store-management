@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: MeghanaStore
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:50098}/${DB_NAME:store}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:TjKpD7iI6Y}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
