@@ -28,10 +28,9 @@ public class ItemControllerTest {
 
     @Test
     public void getAllItems() {
-        List<Item> list = List.of(
+        when(itemService.getAllItems()).thenReturn(List.of(
                 new Item("saree", 100.0, 1)
-        );
-        when(itemService.getAllItems()).thenReturn(list);
+        ));
         List<Item> allItems = itemService.getAllItems();
         Assertions.assertEquals(allItems.size(), 1);
     }
@@ -39,24 +38,21 @@ public class ItemControllerTest {
     @Test
     public void getItemByItemId() throws EntityNotFoundException {
         ItemDto item = new ItemDto("1", "saree", 100.0, 1);
-        when(itemService.getItemByItemId(Long.valueOf(item.getId()))).thenReturn(item);
-        ItemDto i = itemService.getItemByItemId(Long.valueOf(item.getId()));
-        Assertions.assertEquals(i.getName(), "saree");
+        when(itemService.getItemByItemId(any())).thenReturn(item);
+        Assertions.assertEquals(itemService.getItemByItemId(Long.valueOf(item.getId())).getName(), "saree");
     }
 
     @Test
     public void saveItem() {
         ItemDto item = new ItemDto("1", "saree", 100.0, 1);
-        when(itemService.insertItem(item)).thenReturn("success");
-        String string = itemService.insertItem(item);
-        Assertions.assertEquals(string, "success");
+        when(itemService.insertItem(any())).thenReturn("saree data inserted successfully");
+        Assertions.assertEquals(itemService.insertItem(item), "saree data inserted successfully");
     }
 
     @Test
     public void getItemByItemIdThrowsEntityNotFoundException() throws EntityNotFoundException {
-        ItemDto item = new ItemDto("1", "saree", 100.0, 1);
-        when(itemService.getItemByItemId(any())).thenThrow(new EntityNotFoundException("1 Entity Not Found in DB."));
-        Assertions.assertThrows(EntityNotFoundException.class, () -> { itemService.getItemByItemId(Long.valueOf(item.getId())); });
+        when(itemService.getItemByItemId(any())).thenThrow(new EntityNotFoundException("Entity Not Found in DB."));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> { itemService.getItemByItemId(1L); });
     }
 
 }

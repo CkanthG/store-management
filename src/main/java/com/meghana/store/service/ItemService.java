@@ -29,7 +29,7 @@ public class ItemService {
      */
     public String insertItem(ItemDto itemDto) {
         itemRepository.save(new Item(itemDto.getName(),itemDto.getItemPrice(), itemDto.getItemQuantity()));
-        return itemDto.getName() + " inserted successfully";
+        return itemDto.getName() + " data inserted successfully";
     }
 
     /**
