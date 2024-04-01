@@ -7,7 +7,9 @@ import com.meghana.store.entity.Item;
 import com.meghana.store.exception.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This Item Service has a business logic related to Items.
@@ -24,12 +26,15 @@ public class ItemService {
 
     /**
      * This method will save item inside DB.
+     *
      * @param itemDto
      * @return String as a response
      */
-    public String insertItem(ItemDto itemDto) {
-        itemRepository.save(new Item(itemDto.getName(),itemDto.getItemPrice(), itemDto.getItemQuantity()));
-        return itemDto.getName() + " data inserted successfully";
+    public ItemDto insertItem(ItemDto itemDto) {
+        return convertEntityToDto(
+                dtoConverter,
+                itemRepository.save(new Item(itemDto.getName(), itemDto.getItemPrice(), itemDto.getItemQuantity()))
+        );
     }
 
     /**
@@ -61,7 +66,25 @@ public class ItemService {
      * This method find all items in DB.
      * @return
      */
-    public List<Item> getAllItems() {
-        return itemRepository.findAll();
+    public List<ItemDto> getAllItems() {
+        List<Item> itemList = itemRepository.findAll();
+        final List<ItemDto> finalList = new ArrayList<>();
+        itemList.forEach(
+          it -> finalList.add(convertEntityToDto(dtoConverter, it))
+        );
+        return finalList;
+    }
+
+    public List<ItemDto> getItemsByName(String name) {
+        List<Item> itemList = itemRepository.findAll();
+        final List<ItemDto> finalList = new ArrayList<>();
+        itemList.forEach(
+                it -> finalList.add(convertEntityToDto(dtoConverter, it))
+        );
+        if (finalList.isEmpty())
+            return List.of();
+        return finalList.stream().filter(
+                it -> it.getName().equals(name)
+        ).collect(Collectors.toList());
     }
 }

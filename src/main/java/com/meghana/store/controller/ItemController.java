@@ -1,7 +1,6 @@
 package com.meghana.store.controller;
 
 import com.meghana.store.dto.ItemDto;
-import com.meghana.store.entity.Item;
 import com.meghana.store.exception.EntityNotFoundException;
 import com.meghana.store.service.ItemService;
 import org.springframework.http.HttpStatus;
@@ -11,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
@@ -34,27 +34,32 @@ public class ItemController {
      * @return ResponseEntity<String>
      */
     @PostMapping
-    public ResponseEntity<String> createItem(@RequestBody ItemDto itemDto) {
+    public ResponseEntity<ItemDto> createItem(@RequestBody ItemDto itemDto) {
         return new ResponseEntity<>(itemService.insertItem(itemDto), HttpStatus.CREATED);
     }
 
     /**
      * Get Item By its ID
      * @param itemId
-     * @return ResponseEntity<Item>
+     * @return ResponseEntity<ItemDto>
      * @throws EntityNotFoundException
      */
     @GetMapping("/{itemId}")
-    public ResponseEntity<ItemDto> getByItem(@PathVariable Long itemId) throws EntityNotFoundException {
+    public ResponseEntity<ItemDto> getItemByItemId(@PathVariable Long itemId) throws EntityNotFoundException {
         return new ResponseEntity<>(itemService.getItemByItemId(itemId), HttpStatus.OK);
     }
 
     /**
      * Get All Items
-     * @return ResponseEntity<List<Item>>
+     * @return ResponseEntity<List<ItemDto>>
      */
     @GetMapping
-    public ResponseEntity<List<Item>> getAllItems() {
+    public ResponseEntity<List<ItemDto>> getAllItems() {
         return new ResponseEntity<>(itemService.getAllItems(), HttpStatus.OK);
+    }
+
+    @GetMapping("/itemName")
+    public ResponseEntity<List<ItemDto>> getItemsByName(@RequestParam String name) {
+        return new ResponseEntity<>(itemService.getItemsByName(name), HttpStatus.OK);
     }
 }
