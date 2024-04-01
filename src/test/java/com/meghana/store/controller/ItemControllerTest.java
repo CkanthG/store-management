@@ -1,6 +1,5 @@
 package com.meghana.store.controller;
 
-import com.meghana.store.ItemRepository;
 import com.meghana.store.dto.ItemDto;
 import com.meghana.store.entity.Item;
 import com.meghana.store.exception.EntityNotFoundException;
@@ -14,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 /**
@@ -25,8 +25,6 @@ public class ItemControllerTest {
 
     @Mock
     ItemService itemService;
-    @Mock
-    ItemRepository itemRepository;
 
     @Test
     public void getAllItems() {
@@ -52,6 +50,13 @@ public class ItemControllerTest {
         when(itemService.insertItem(item)).thenReturn("success");
         String string = itemService.insertItem(item);
         Assertions.assertEquals(string, "success");
+    }
+
+    @Test
+    public void getItemByItemIdThrowsEntityNotFoundException() throws EntityNotFoundException {
+        ItemDto item = new ItemDto("1", "saree", 100.0, 1);
+        when(itemService.getItemByItemId(any())).thenThrow(new EntityNotFoundException("1 Entity Not Found in DB."));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> { itemService.getItemByItemId(Long.valueOf(item.getId())); });
     }
 
 }
