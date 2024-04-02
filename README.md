@@ -24,6 +24,12 @@ kubectl apply -f k8s/store-management-pv.yaml
 
 kubectl apply -f k8s/store-management-deployment.yml
 
+## To View Swagger Documentation of this application, place this below http URL on browser page with valid hostname and port number.
+
+http://hostname:port/swagger-ui.html
+
+
+
 
 
 
