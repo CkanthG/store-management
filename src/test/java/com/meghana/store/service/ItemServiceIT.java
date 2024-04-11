@@ -2,6 +2,7 @@ package com.meghana.store.service;
 
 import com.meghana.store.ItemRepository;
 import com.meghana.store.dto.ItemDto;
+import com.meghana.store.entity.Item;
 import com.meghana.store.exception.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,6 +35,15 @@ public class ItemServiceIT {
         ItemDto itemDto = new ItemDto("1", "item", 100.0, 1);
         ItemDto responseItemDto = itemService.insertItem(itemDto);
         Assertions.assertEquals(responseItemDto.getName(), "item");
+    }
+
+    @Test
+    public void updateItem() throws EntityNotFoundException {
+        ItemDto itemDto = new ItemDto("1", "item", 100.0, 1);
+        ItemDto insertItem = itemService.insertItem(itemDto);
+        itemDto.setName("updated item");
+        ItemDto responseItemDto = itemService.updateItem(itemDto, Long.valueOf(insertItem.getId()));
+        Assertions.assertEquals(responseItemDto.getName(), "updated item");
     }
 
     @Test
@@ -70,5 +80,13 @@ public class ItemServiceIT {
         itemService.insertItem(itemDto1);
         List<ItemDto> allItems = itemService.getAllItems();
         Assertions.assertEquals(allItems.size(), 2);
+    }
+
+    @Test
+    public void deleteItem() throws EntityNotFoundException {
+        ItemDto itemDto = new ItemDto("1", "item", 100.0, 1);
+        ItemDto item = itemService.insertItem(itemDto);
+        itemService.deleteItem(Long.valueOf(item.getId()));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> itemService.getItemByItemId(1L));
     }
 }
