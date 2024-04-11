@@ -103,13 +103,9 @@ public class ItemService {
      */
     public List<ItemDto> getAllItems() {
         log.info("ItemService:getAllItems executed");
-        List<Item> itemList = itemRepository.findAll();
-        final List<ItemDto> finalList = new ArrayList<>();
-        itemList.forEach(
-          it -> finalList.add(convertEntityToDto(dtoConverter, it))
-        );
-        log.info("ItemService:getAllItems ended");
-        return finalList;
+        return itemRepository.findAll().stream().map(
+          it -> convertEntityToDto(dtoConverter, it)
+        ).collect(Collectors.toList());
     }
 
     /**
@@ -119,15 +115,10 @@ public class ItemService {
      */
     public List<ItemDto> getItemsByName(String name) {
         log.info("ItemService:getItemsByName executed");
-        List<Item> itemList = itemRepository.findAll();
-        final List<ItemDto> finalList = new ArrayList<>();
-        itemList.forEach(
-                it -> finalList.add(convertEntityToDto(dtoConverter, it))
-        );
-        if (finalList.isEmpty())
-            return List.of();
-        return finalList.stream().filter(
-                it -> it.getName().equals(name)
+        return itemRepository.findAll().stream().map(
+                it -> convertEntityToDto(dtoConverter, it)
+        ).filter(
+                itemDto -> itemDto.getName().equals(name)
         ).collect(Collectors.toList());
     }
 
