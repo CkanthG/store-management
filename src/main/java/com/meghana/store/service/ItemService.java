@@ -1,15 +1,15 @@
 package com.meghana.store.service;
 
-import com.meghana.store.ItemRepository;
 import com.meghana.store.converter.DtoConverter;
 import com.meghana.store.converter.EntityConverter;
 import com.meghana.store.dto.ItemDto;
 import com.meghana.store.entity.Item;
 import com.meghana.store.exception.EntityNotFoundException;
+import com.meghana.store.repository.ItemRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,6 +63,7 @@ public class ItemService {
 
     /**
      * This method find an item inside DB by its id.
+     *
      * @param id
      * @return Item object
      * @throws EntityNotFoundException
@@ -79,6 +80,7 @@ public class ItemService {
 
     /**
      * This method is to convertEntityToDto entity to dto using custom functional interface.
+     *
      * @param dtoConverter
      * @param item
      * @return ItemDto
@@ -89,6 +91,7 @@ public class ItemService {
 
     /**
      * This method is to convert dto to entity
+     *
      * @param entityConverter
      * @param itemDto
      * @return item
@@ -99,20 +102,24 @@ public class ItemService {
 
     /**
      * This method find all items in DB.
+     *
      * @return list of items
      */
+    @Cacheable("all-items")
     public List<ItemDto> getAllItems() {
         log.info("ItemService:getAllItems executed");
         return itemRepository.findAll().stream().map(
-          it -> convertEntityToDto(dtoConverter, it)
+                it -> convertEntityToDto(dtoConverter, it)
         ).collect(Collectors.toList());
     }
 
     /**
      * This method is to get all items by its name
+     *
      * @param name
      * @return list of items
      */
+    @Cacheable("all-items-by-name")
     public List<ItemDto> getItemsByName(String name) {
         log.info("ItemService:getItemsByName executed");
         return itemRepository.findAll().stream().map(
@@ -124,6 +131,7 @@ public class ItemService {
 
     /**
      * This method is to delete the item inside the DB.
+     *
      * @param itemId
      * @throws EntityNotFoundException
      */

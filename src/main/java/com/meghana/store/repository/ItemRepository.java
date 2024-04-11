@@ -1,4 +1,4 @@
-package com.meghana.store;
+package com.meghana.store.repository;
 
 import com.meghana.store.entity.Item;
 import org.springframework.data.jpa.repository.JpaRepository;

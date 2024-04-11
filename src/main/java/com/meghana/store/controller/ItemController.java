@@ -33,6 +33,7 @@ public class ItemController {
 
     /**
      * Save Item into DB.
+     *
      * @param itemDto accept to insert into DB.
      * @return ResponseEntity<String>
      */
@@ -44,6 +45,7 @@ public class ItemController {
 
     /**
      * Get Item By its ID
+     *
      * @param itemId
      * @return ResponseEntity<ItemDto>
      * @throws EntityNotFoundException
@@ -56,7 +58,8 @@ public class ItemController {
 
     /**
      * Get All Items
-     * @return ResponseEntity<List<ItemDto>>
+     *
+     * @return ResponseEntity<List < ItemDto>>
      */
     @GetMapping
     public ResponseEntity<List<ItemDto>> getAllItems() {
@@ -66,6 +69,7 @@ public class ItemController {
 
     /**
      * Get all items by its name
+     *
      * @param name
      * @return list of items
      */
@@ -77,6 +81,7 @@ public class ItemController {
 
     /**
      * Update the item.
+     *
      * @param itemDto
      * @param itemId
      * @return updated item
@@ -90,6 +95,7 @@ public class ItemController {
 
     /**
      * Delete the item by its id
+     *
      * @param itemId
      * @return nothing
      * @throws EntityNotFoundException

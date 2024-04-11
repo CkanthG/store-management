@@ -14,6 +14,7 @@ public class ControllerExceptionHandler {
 
     /**
      * This method is sent proper error message to end user.
+     *
      * @param e exception object
      * @return exception message
      */
