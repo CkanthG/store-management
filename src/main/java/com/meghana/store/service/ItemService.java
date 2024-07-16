@@ -7,6 +7,8 @@ import com.meghana.store.entity.Item;
 import com.meghana.store.exception.EntityNotFoundException;
 import com.meghana.store.repository.ItemRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +52,7 @@ public class ItemService {
      * @param itemDto
      * @return Item
      */
+    @CachePut(value = "items", key = "#itemId")
     public ItemDto updateItem(ItemDto itemDto, Long itemId) throws EntityNotFoundException {
         log.info("ItemService:updateItem executed");
         itemRepository.findById(itemId)
@@ -68,6 +71,7 @@ public class ItemService {
      * @return Item object
      * @throws EntityNotFoundException
      */
+    @Cacheable("items")
     public ItemDto getItemByItemId(Long id) throws EntityNotFoundException {
         log.info("ItemService:getItemByItemId executed");
         return convertEntityToDto(
@@ -105,7 +109,6 @@ public class ItemService {
      *
      * @return list of items
      */
-    @Cacheable("all-items")
     public List<ItemDto> getAllItems() {
         log.info("ItemService:getAllItems executed");
         return itemRepository.findAll().stream().map(
@@ -119,7 +122,6 @@ public class ItemService {
      * @param name
      * @return list of items
      */
-    @Cacheable("all-items-by-name")
     public List<ItemDto> getItemsByName(String name) {
         log.info("ItemService:getItemsByName executed");
         return itemRepository.findAll().stream().map(
@@ -135,6 +137,7 @@ public class ItemService {
      * @param itemId
      * @throws EntityNotFoundException
      */
+    @CacheEvict(value = "items", key = "#itemId")
     public void deleteItem(Long itemId) throws EntityNotFoundException {
         log.info("ItemService:deleteItem executed");
         Item item = itemRepository.findById(itemId)
