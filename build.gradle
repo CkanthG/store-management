@@ -33,6 +33,8 @@ dependencies {
 
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4'
 
+    implementation 'io.micrometer:micrometer-registry-prometheus:1.13.0'
+
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'
         exclude module: 'junit-vintage-engine'
