@@ -5,7 +5,6 @@ import com.meghana.store.exception.EntityNotFoundException;
 import com.meghana.store.service.ItemService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +25,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/items")
 @AllArgsConstructor
-@Slf4j
 public class ItemController {
 
     private ItemService itemService;
@@ -39,7 +37,6 @@ public class ItemController {
      */
     @PostMapping
     public ResponseEntity<ItemDto> createItem(@RequestBody @Valid ItemDto itemDto) {
-        log.info("ItemController:createItem method invoked with request body {}", itemDto);
         return new ResponseEntity<>(itemService.insertItem(itemDto), HttpStatus.CREATED);
     }
 
@@ -52,7 +49,6 @@ public class ItemController {
      */
     @GetMapping("/{itemId}")
     public ResponseEntity<ItemDto> getItemByItemId(@PathVariable Long itemId) throws EntityNotFoundException {
-        log.info("ItemController:getItemByItemId method invoked with itemId: {}", itemId);
         return new ResponseEntity<>(itemService.getItemByItemId(itemId), HttpStatus.OK);
     }
 
@@ -63,7 +59,6 @@ public class ItemController {
      */
     @GetMapping
     public ResponseEntity<List<ItemDto>> getAllItems() {
-        log.info("ItemController:getAllItems method invoked");
         return new ResponseEntity<>(itemService.getAllItems(), HttpStatus.OK);
     }
 
@@ -75,7 +70,6 @@ public class ItemController {
      */
     @GetMapping("/itemName")
     public ResponseEntity<List<ItemDto>> getItemsByName(@RequestParam String name) {
-        log.info("ItemController:getItemsByName method invoked with name: {}", name);
         return new ResponseEntity<>(itemService.getItemsByName(name), HttpStatus.OK);
     }
 
@@ -89,7 +83,6 @@ public class ItemController {
      */
     @PutMapping
     public ResponseEntity<ItemDto> updateItem(@RequestBody @Valid ItemDto itemDto, @RequestParam Long itemId) throws EntityNotFoundException {
-        log.info("ItemController:updateItem method invoked with itemId: {} and request body {}", itemId, itemDto);
         return new ResponseEntity<>(itemService.updateItem(itemDto, itemId), HttpStatus.OK);
     }
 
@@ -102,9 +95,7 @@ public class ItemController {
      */
     @DeleteMapping("/{itemId}")
     public ResponseEntity<Void> deleteItem(@PathVariable Long itemId) throws EntityNotFoundException {
-        log.info("ItemController:deleteItem method invoked with itemId {}", itemId);
         itemService.deleteItem(itemId);
-        log.info("ItemController:getItemByItemId method invoked with itemId {}", itemId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

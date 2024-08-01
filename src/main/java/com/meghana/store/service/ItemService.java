@@ -6,7 +6,6 @@ import com.meghana.store.dto.ItemDto;
 import com.meghana.store.entity.Item;
 import com.meghana.store.exception.EntityNotFoundException;
 import com.meghana.store.repository.ItemRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -19,7 +18,6 @@ import java.util.stream.Collectors;
  * This Item Service has a business logic related to Items.
  */
 @Service
-@Slf4j
 public class ItemService {
 
     private ItemRepository itemRepository;
@@ -38,7 +36,6 @@ public class ItemService {
      * @return ItemDto
      */
     public ItemDto insertItem(ItemDto itemDto) {
-        log.info("ItemService:insertItem executed");
         return convertEntityToDto(
                 dtoConverter,
                 itemRepository.save(new Item(itemDto.getName(), itemDto.getItemPrice(), itemDto.getItemQuantity()))
@@ -54,7 +51,6 @@ public class ItemService {
      */
     @CachePut(value = "items", key = "#itemId")
     public ItemDto updateItem(ItemDto itemDto, Long itemId) throws EntityNotFoundException {
-        log.info("ItemService:updateItem executed");
         itemRepository.findById(itemId)
                 .orElseThrow(() -> new EntityNotFoundException("Item with ID " + itemId + " not found in the database"));
         itemDto.setId(itemId.toString());
@@ -73,7 +69,6 @@ public class ItemService {
      */
     @Cacheable("items")
     public ItemDto getItemByItemId(Long id) throws EntityNotFoundException {
-        log.info("ItemService:getItemByItemId executed");
         return convertEntityToDto(
                 dtoConverter,
                 itemRepository.findById(id).orElseThrow(
@@ -110,7 +105,6 @@ public class ItemService {
      * @return list of items
      */
     public List<ItemDto> getAllItems() {
-        log.info("ItemService:getAllItems executed");
         return itemRepository.findAll().stream().map(
                 it -> convertEntityToDto(dtoConverter, it)
         ).collect(Collectors.toList());
@@ -123,7 +117,6 @@ public class ItemService {
      * @return list of items
      */
     public List<ItemDto> getItemsByName(String name) {
-        log.info("ItemService:getItemsByName executed");
         return itemRepository.findAll().stream().map(
                 it -> convertEntityToDto(dtoConverter, it)
         ).filter(
@@ -139,10 +132,8 @@ public class ItemService {
      */
     @CacheEvict(value = "items", key = "#itemId")
     public void deleteItem(Long itemId) throws EntityNotFoundException {
-        log.info("ItemService:deleteItem executed");
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new EntityNotFoundException("Item with ID " + itemId + " not found in the database"));
         itemRepository.delete(item);
-        log.info("ItemService:deleteItem ended");
     }
 }
