@@ -1,0 +1,138 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: store-management-config-map
+  namespace: default
+data:
+  DB_HOST: "mysql-1711549633.default.svc.cluster.local"
+  DB_NAME: "store"
+  DB_USER: "root"
+  DB_PORT: "3306"
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: store-management-secret-map
+  namespace: default
+data:
+  DB_PASSWORD: "VGpLcEQ3aUk2WQ=="
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: store-management
+  labels:
+    app: store-management
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  replicas: 2
+  selector:
+    matchLabels:
+      app: store-management
+  progressDeadlineSeconds: 300
+  revisionHistoryLimit: 1
+  template:
+    metadata:
+      labels:
+        app: store-management
+    spec:
+      containers:
+        - name: store-management
+          image: docker.io/sreekanthgaddoju/store-management:latest
+          terminationMessagePolicy: FallbackToLogsOnError
+          ports:
+            - name: web
+              containerPort: 8080
+          resources:
+            limits:
+              cpu: 500m
+              memory: 4G
+            requests:
+              cpu: 500m
+              memory: 2G
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: store-management-config-map
+                  key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: store-management-config-map
+                  key: DB_PORT
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: store-management-config-map
+                  key: DB_NAME
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: store-management-config-map
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: store-management-secret-map
+                  key: DB_PASSWORD
+          volumeMounts:
+            - name: store-management-persistent-storage
+              mountPath: /var/lib/store-management
+      volumes:
+        - name: store-management-persistent-storage
+          persistentVolumeClaim:
+            claimName: store-management-pv-claim
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: store-management
+  labels:
+    app: store-management
+spec:
+  selector:
+    app: store-management
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: store-management
+  labels:
+    app: store-management
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: letsencrypt-production
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/proxy-body-size: "200m"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  rules:
+    - host: store
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: store-management
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - store
+      secretName: store-management-cert
